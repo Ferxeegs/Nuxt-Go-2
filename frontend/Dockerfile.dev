@@ -1,0 +1,20 @@
+# Official images via AWS Public ECR (Docker Hub timeouts are common).
+FROM public.ecr.aws/docker/library/node:22-alpine
+# Do not use WORKDIR /app: Nuxt 3.16+ treats "app" as the application dir
+# and Vite then serves /_nuxt/app/node_modules/... which breaks #build aliases.
+WORKDIR /frontend
+
+RUN apk add --no-cache wget
+
+COPY package.json package-lock.json ./
+RUN npm ci
+
+COPY . .
+
+ENV HOST=0.0.0.0
+ENV NITRO_HOST=0.0.0.0
+ENV NITRO_PORT=3000
+ENV CHOKIDAR_USEPOLLING=true
+
+EXPOSE 3000 24678
+CMD ["sh", "-c", "npx nuxi prepare && npm run dev -- --host 0.0.0.0 --port 3000"]

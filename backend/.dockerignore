@@ -1,0 +1,13 @@
+tmp
+bin
+.git
+.gitignore
+*.md
+*.exe
+*.test
+coverage.out
+docs/*.json
+docs/*.yaml
+storage/uploads/**
+!storage/uploads/.gitkeep
+.air.toml.bak
