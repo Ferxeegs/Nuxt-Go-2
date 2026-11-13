@@ -1,4 +1,5 @@
 import { fileURLToPath } from "node:url";
+import vuetify from "vite-plugin-vuetify";
 import { dockerPagesWatchPlugin } from "./plugins-dev/docker-pages-watch";
 
 const rootDir = fileURLToPath(new URL(".", import.meta.url));
@@ -14,34 +15,8 @@ export default defineNuxtConfig({
     shim: false,
   },
 
-  // Inline module: hard-restart when pages are added/removed so Vite does not
-  // keep serving a stale `.nuxt/routes.mjs` transform (common on Docker Desktop).
-  modules: [
-    (_options, nuxt) => {
-      if (!nuxt.options.dev) return;
-
-      let restarting = false;
-      nuxt.hook("builder:watch", async (event, rawPath) => {
-        if (restarting) return;
-        if (event !== "add" && event !== "unlink") return;
-
-        const path = String(rawPath).replace(/\\/g, "/");
-        if (!path.includes("/pages/") || !path.endsWith(".vue")) return;
-
-        restarting = true;
-        console.info(
-          `[docker-pages-restart] page ${event}: ${path} — hard restart to refresh routes`,
-        );
-        try {
-          await nuxt.callHook("restart", { hard: true });
-        } finally {
-          setTimeout(() => {
-            restarting = false;
-          }, 5000);
-        }
-      });
-    },
-  ],
+  // SPA only: devtools add a lot of dev-server startup overhead.
+  devtools: { enabled: false },
 
   runtimeConfig: {
     apiUrl: process.env.API_URL || "http://localhost:8080",
@@ -66,6 +41,8 @@ export default defineNuxtConfig({
   },
 
   hooks: {
+    // Required in dev: Vite's dep-scan reads .nuxt/*.mjs from disk before
+    // Nuxt would lazily write virtual templates.
     "app:templates"(app) {
       for (const template of app.templates) {
         template.write = true;
@@ -100,8 +77,18 @@ export default defineNuxtConfig({
         path: "hmr/",
       };
 
+      // Tree-shaken Vuetify (components/directives imported on demand).
       config.plugins ??= [];
-      config.plugins.push(dockerPagesWatchPlugin(`${rootDir}/pages`));
+      config.plugins.push(vuetify({ autoImport: true }));
+    },
+  },
+
+  // Nuxt's own watcher: same polling, minus heavy directories.
+  watchers: {
+    chokidar: {
+      usePolling: true,
+      interval: 1000,
+      ignored: ["**/node_modules/**", "**/.nuxt/**", "**/.output/**", "**/.data/**"],
     },
   },
 
@@ -118,14 +105,32 @@ export default defineNuxtConfig({
         strict: false,
       },
       watch: {
+        // Bind mounts on Windows/macOS emit no inotify events, so poll, but
+        // only the source files that matter and not too aggressively.
         usePolling: true,
-        // Faster detection of newly created page files on Docker Desktop.
-        interval: 500,
-        binaryInterval: 1000,
+        interval: 1000,
+        binaryInterval: 3000,
+        ignored: [
+          "**/node_modules/**",
+          "**/.nuxt/**",
+          "**/.output/**",
+          "**/.data/**",
+          "**/.git/**",
+        ],
       },
     },
     optimizeDeps: {
       exclude: ["nuxt"],
+      // Pre-bundle heavy deps at startup so Vite does not discover them
+      // lazily and trigger optimize + full-reload cycles on first page load.
+      include: [
+        "vuetify",
+        "apexcharts",
+        "vue3-apexcharts",
+        "vue-tabler-icons",
+        "vue3-perfect-scrollbar",
+        "@iconify/vue",
+      ],
     },
     plugins: [dockerPagesWatchPlugin(`${rootDir}/pages`)],
   },

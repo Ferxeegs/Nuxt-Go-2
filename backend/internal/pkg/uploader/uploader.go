@@ -1,4 +1,4 @@
-// Package uploader validates and persists uploaded files to local disk or MinIO/S3.
+// Package uploader validates and persists uploaded files to local disk or RustFS/S3.
 package uploader
 
 import (
@@ -55,7 +55,7 @@ type Saved struct {
 	PublicURL    string // absolute or site-relative URL for clients
 }
 
-// Uploader stores files on local disk and optionally on MinIO/S3.
+// Uploader stores files on local disk and optionally on RustFS/S3.
 type Uploader struct {
 	BaseDir   string
 	MaxSizeMB int64
@@ -78,7 +78,7 @@ func New(baseDir string, maxSizeMB int64) *Uploader {
 	}
 }
 
-// NewFromConfig builds an uploader that prefers MinIO when S3_ENDPOINT_URL is set.
+// NewFromConfig builds an uploader that prefers RustFS when S3_ENDPOINT_URL is set.
 func NewFromConfig(cfg *appconfig.Config) (*Uploader, error) {
 	u := New(cfg.UploadDir, cfg.MaxUploadSizeMB)
 	if strings.TrimSpace(cfg.S3EndpointURL) == "" {
@@ -114,7 +114,7 @@ func NewFromConfig(cfg *appconfig.Config) (*Uploader, error) {
 	u.s3Client = client
 	u.s3Bucket = strings.TrimSpace(cfg.S3Bucket)
 	u.s3PublicBucket = bucket
-	// Prefer same-origin nginx proxy path; fallback to public MinIO endpoint.
+	// Prefer same-origin nginx proxy path; fallback to public RustFS endpoint.
 	if pub := strings.TrimRight(strings.TrimSpace(cfg.S3PublicEndpointURL), "/"); pub != "" {
 		// If public endpoint already includes the bucket path, use as-is;
 		// otherwise append bucket for path-style URLs.

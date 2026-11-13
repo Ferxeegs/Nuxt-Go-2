@@ -19,29 +19,29 @@ export interface menu {
 }
 
 const sidebarItem: menu[] = [
-  { header: 'Home' },
+  { header: 'Overview' },
   {
     title: 'Dashboard',
-    icon: 'graph-new-linear',
+    icon: 'mdi-view-dashboard-outline',
     to: '/',
   },
 
   { header: 'Access Control' },
   {
     title: 'Users',
-    icon: 'user-linear',
+    icon: 'mdi-account-group-outline',
     to: '/admin/users',
     permission: 'user.view',
   },
   {
     title: 'Roles',
-    icon: 'shield-user-outline',
+    icon: 'mdi-shield-account-outline',
     to: '/admin/roles',
     permission: 'role.view',
   },
   {
     title: 'Scopes',
-    icon: 'map-point-outline',
+    icon: 'mdi-map-marker-radius-outline',
     to: '/admin/scopes',
     permission: 'scope.view',
   },
@@ -49,55 +49,23 @@ const sidebarItem: menu[] = [
   { header: 'Site' },
   {
     title: 'Web Settings',
-    icon: 'settings-minimalistic-linear',
+    icon: 'mdi-cog-outline',
     to: '/admin/settings',
     permission: 'setting.view',
   },
 
-  { header: 'ui' },
+  { header: 'UI Kit' },
   {
-    title: 'Alert',
-    icon: 'volume-small-broken',
-    to: '/ui-components/Alerts',
-  },
-  {
-    title: 'Button',
-    icon: 'tag-horizontal-outline',
-    to: '/ui-components/Buttons',
-  },
-  {
-    title: 'Cards',
-    icon: 'cardholder-linear',
-    to: '/ui-components/Cards',
-  },
-  {
-    title: 'Tables',
-    icon: 'suspension-outline',
-    to: '/ui-components/Tables',
-  },
-
-  { header: 'Auth' },
-  {
-    title: 'Login',
-    icon: 'user-linear',
-    to: '/auth/login',
-  },
-  {
-    title: 'Register',
-    icon: 'user-hand-up-linear',
-    to: '/auth/register',
-  },
-
-  { header: 'Extra' },
-  {
-    title: 'Icons',
-    icon: 'ghost-smile-outline',
-    to: '/pages/Icons',
-  },
-  {
-    title: 'Sample Page',
-    icon: 'book-bookmark-linear',
-    to: '/pages/sample-page',
+    title: 'Components',
+    icon: 'mdi-shape-outline',
+    children: [
+      { title: 'Alerts', to: '/ui-components/Alerts' },
+      { title: 'Buttons', to: '/ui-components/Buttons' },
+      { title: 'Cards', to: '/ui-components/Cards' },
+      { title: 'Tables', to: '/ui-components/Tables' },
+      { title: 'Icons', to: '/pages/Icons' },
+      { title: 'Sample Page', to: '/pages/sample-page' },
+    ],
   },
 ]
 

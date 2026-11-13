@@ -1,28 +1,48 @@
 #!/bin/sh
 set -e
 
-# Must match the underscore-free Docker network alias on template_minio
-# (MinIO rejects Host headers that contain "_").
-MINIO_HOST="${MINIO_HOST:-template-minio-svc}"
-MINIO_ENDPOINT="http://${MINIO_HOST}:9000"
+# Bucket bootstrap for the S3-compatible object store (RustFS) using aws-cli.
+RUSTFS_HOST="${RUSTFS_HOST:-template-rustfs-svc}"
+ENDPOINT="http://${RUSTFS_HOST}:9000"
 
-echo "Waiting for MinIO at ${MINIO_ENDPOINT}..."
+export AWS_ACCESS_KEY_ID="${RUSTFS_ROOT_USER}"
+export AWS_SECRET_ACCESS_KEY="${RUSTFS_ROOT_PASSWORD}"
+export AWS_DEFAULT_REGION="${RUSTFS_SITE_REGION:-us-east-1}"
+
+s3() { aws --endpoint-url "${ENDPOINT}" "$@"; }
+
+echo "Waiting for object storage at ${ENDPOINT}..."
 i=0
-until mc alias set local "${MINIO_ENDPOINT}" "${MINIO_ROOT_USER}" "${MINIO_ROOT_PASSWORD}" >/dev/null 2>&1; do
+until s3 s3api list-buckets >/dev/null 2>&1; do
   i=$((i + 1))
   if [ "$i" -ge 30 ]; then
-    echo "MinIO did not become ready in time" >&2
+    echo "Object storage did not become ready in time" >&2
     exit 1
   fi
   sleep 1
 done
 
-mc mb --ignore-existing "local/${MINIO_DEFAULT_BUCKET}"
-echo "Bucket ${MINIO_DEFAULT_BUCKET} ready."
+make_bucket() {
+  if s3 s3api head-bucket --bucket "$1" >/dev/null 2>&1; then
+    echo "Bucket $1 already exists."
+  else
+    s3 s3api create-bucket --bucket "$1"
+  fi
+  echo "Bucket $1 ready."
+}
 
-mc mb --ignore-existing "local/${MINIO_PUBLIC_BUCKET}"
-echo "Bucket ${MINIO_PUBLIC_BUCKET} ready."
+make_bucket "${RUSTFS_DEFAULT_BUCKET}"
+make_bucket "${RUSTFS_PUBLIC_BUCKET}"
 
 # Public read for assets that should be served anonymously (logos, etc.).
-mc anonymous set download "local/${MINIO_PUBLIC_BUCKET}" || true
-echo "MinIO init complete."
+s3 s3api put-bucket-policy --bucket "${RUSTFS_PUBLIC_BUCKET}" --policy "{
+  \"Version\": \"2012-10-17\",
+  \"Statement\": [{
+    \"Effect\": \"Allow\",
+    \"Principal\": {\"AWS\": [\"*\"]},
+    \"Action\": [\"s3:GetObject\"],
+    \"Resource\": [\"arn:aws:s3:::${RUSTFS_PUBLIC_BUCKET}/*\"]
+  }]
+}" || echo "Warning: could not set public-read policy" >&2
+
+echo "Object storage init complete."

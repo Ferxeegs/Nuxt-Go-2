@@ -71,7 +71,13 @@ export function useUsersAdmin() {
     await api(`/admin/users/${id}/reset-password`, { method: 'POST' })
   }
 
+  async function getUser(id: string) {
+    const res = await api<AdminUser>(`/admin/users/${id}`)
+    return res.data as AdminUser
+  }
+
   return {
+    getUser,
     items,
     loading,
     error,

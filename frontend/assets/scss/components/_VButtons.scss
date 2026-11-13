@@ -6,8 +6,9 @@
     border-color: rgb(var(--v-theme-borderColor)) !important;
 }
 .v-btn{
-    text-transform: capitalize;
+    text-transform: none;
     letter-spacing: 0;
+    font-weight: 500;
 }
 .v-btn--elevated:hover{
     box-shadow: none;
@@ -15,3 +16,4 @@
 // .v-btn--variant-outlined{
 //     border-color: rgb(var(--v-theme-inputBorder)) !important;
 // }
+.v-btn.v-btn { text-transform: none !important; letter-spacing: 0 !important; }

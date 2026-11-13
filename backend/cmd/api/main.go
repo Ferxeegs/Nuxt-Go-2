@@ -78,7 +78,7 @@ func main() {
 		log.Fatal().Err(err).Msg("failed to initialize file uploader")
 	}
 	if fileUploader.UsesS3() {
-		log.Info().Str("public_prefix", fileUploader.PublicURLPrefix()).Msg("media uploads use MinIO/S3")
+		log.Info().Str("public_prefix", fileUploader.PublicURLPrefix()).Msg("media uploads use RustFS/S3")
 	} else {
 		log.Info().Str("dir", cfg.UploadDir).Msg("media uploads use local disk")
 	}

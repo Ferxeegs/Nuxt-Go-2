@@ -45,11 +45,27 @@ html {
     font-weight: 600;
 }
 .v-table .v-table__wrapper > table > thead > tr > th{
-    font-size: 16px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: rgb(var(--v-theme-grey100));
+    background: rgb(var(--v-theme-bglight));
+    border-bottom: 1px solid rgb(var(--v-theme-borderColor)) !important;
+    white-space: nowrap;
 }
 
 .v-table .v-table__wrapper > table > tbody > tr > td{
     font-size: 14px;
+    border-bottom: 1px solid rgb(var(--v-theme-borderColor)) !important;
+}
+
+.v-table .v-table__wrapper > table > tbody > tr:last-child > td{
+    border-bottom: 0 !important;
+}
+
+.v-table .v-table__wrapper > table > tbody > tr:hover > td{
+    background: rgb(var(--v-theme-hoverColor));
 }
 .h-100vh{
     height: 100vh;

@@ -245,7 +245,7 @@ async function onChangePassword() {
                   density="comfortable"
                   hide-details="auto"
                   :disabled="readOnly"
-                  hint="Optional image URL (MinIO upload fills this automatically)"
+                  hint="Optional image URL (RustFS upload fills this automatically)"
                   persistent-hint
                 />
               </div>

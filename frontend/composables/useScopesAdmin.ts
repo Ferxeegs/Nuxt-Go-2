@@ -69,5 +69,10 @@ export function useScopesAdmin() {
     await fetchScopes()
   }
 
-  return { items, loading, error, search, fetchScopes, createScope, updateScope, deleteScope }
+  async function getScope(id: number) {
+    const res = await api<AdminScope>(`/admin/scopes/${id}`)
+    return res.data as AdminScope
+  }
+
+  return { items, loading, error, search, fetchScopes, getScope, createScope, updateScope, deleteScope }
 }

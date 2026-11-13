@@ -153,7 +153,7 @@ async function onReload() {
       <div>
         <h1 class="text-h5 font-weight-bold">Web Settings</h1>
         <p class="text-body-2 text-medium-emphasis mb-0">
-          Site configuration. Image fields upload to MinIO and store the public URL.
+          Site configuration. Image fields upload to RustFS and store the public URL.
         </p>
       </div>
       <div class="d-flex ga-2">
@@ -272,7 +272,7 @@ async function onReload() {
                           density="comfortable"
                           hide-details="auto"
                           :disabled="!canUpdate"
-                          hint="Filled automatically after upload to MinIO"
+                          hint="Filled automatically after upload to RustFS"
                           persistent-hint
                         />
                         <v-btn

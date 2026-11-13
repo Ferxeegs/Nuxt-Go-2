@@ -43,15 +43,14 @@ services:
       # keeping stale generated routes across recreates and contributed to
       # client 404s for newly added pages until a hard restart.
       - /frontend/.nuxt
-    depends_on:
-      api-dev:
-        condition: service_healthy
+    # No depends_on api-dev: the SPA only calls the API from the browser (via
+    # nginx), so starting in parallel with the Go build cuts cold-start time.
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3000"]
       interval: 10s
       timeout: 3s
       retries: 10
-      start_period: 60s
+      start_period: 90s
     networks:
       - app-bridge
 
@@ -138,21 +137,21 @@ services:
     networks:
       - app-bridge
 
-  template_minio:
-    image: minio/minio:latest
-    container_name: template_minio
-    command: server /data --console-address ":9001"
+  template_rustfs:
+    # S3-compatible object storage (RustFS).
+    image: rustfs/rustfs:latest
+    container_name: template_rustfs
     ports:
-      - "${MINIO_API_PORT:-9020}:9000"
-      - "${MINIO_CONSOLE_PORT:-9021}:9001"
+      - "${RUSTFS_API_PORT:-9020}:9000"
+      - "${RUSTFS_CONSOLE_PORT:-9021}:9001"
     environment:
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin123}
-      MINIO_SITE_REGION: ${MINIO_SITE_REGION:-us-east-1}
+      RUSTFS_ACCESS_KEY: ${RUSTFS_ROOT_USER:-rustfsadmin}
+      RUSTFS_SECRET_KEY: ${RUSTFS_ROOT_PASSWORD:-rustfsadmin123}
+      RUSTFS_CONSOLE_ENABLE: "true"
     volumes:
-      - template_minio_data:/data
+      - template_rustfs_data:/data
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://127.0.0.1:9000/minio/health/live"]
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:9000/health"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -160,28 +159,29 @@ services:
     restart: unless-stopped
     networks:
       app-bridge:
-        # MinIO rejects Host headers containing "_" ("invalid hostname"), but
+        # RustFS rejects Host headers containing "_" ("invalid hostname"), but
         # the container_name (used as the default DNS name) has one — give it
         # an extra underscore-free alias and use THAT in every URL that talks
-        # to MinIO (S3_ENDPOINT_URL, storage/scripts/init-minio.sh).
+        # to RustFS (S3_ENDPOINT_URL, storage/scripts/init-rustfs.sh).
         aliases:
-          - template-minio-svc
+          - template-rustfs-svc
 
-  template_minio_init:
-    image: minio/mc:latest
-    container_name: template_minio_init
+  template_rustfs_init:
+    image: amazon/aws-cli:latest
+    container_name: template_rustfs_init
     depends_on:
-      template_minio:
+      template_rustfs:
         condition: service_healthy
     environment:
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin123}
-      MINIO_DEFAULT_BUCKET: ${MINIO_DEFAULT_BUCKET:-template-documents}
-      MINIO_PUBLIC_BUCKET: ${MINIO_PUBLIC_BUCKET:-template-public-documents}
-      MINIO_HOST: template-minio-svc
+      RUSTFS_ROOT_USER: ${RUSTFS_ROOT_USER:-rustfsadmin}
+      RUSTFS_ROOT_PASSWORD: ${RUSTFS_ROOT_PASSWORD:-rustfsadmin123}
+      RUSTFS_SITE_REGION: ${RUSTFS_SITE_REGION:-us-east-1}
+      RUSTFS_DEFAULT_BUCKET: ${RUSTFS_DEFAULT_BUCKET:-template-documents}
+      RUSTFS_PUBLIC_BUCKET: ${RUSTFS_PUBLIC_BUCKET:-template-public-documents}
+      RUSTFS_HOST: template-rustfs-svc
     volumes:
-      - ./storage/scripts/init-minio.sh:/init-minio.sh:ro
-    entrypoint: ["/bin/sh", "/init-minio.sh"]
+      - ./storage/scripts/init-rustfs.sh:/init-rustfs.sh:ro
+    entrypoint: ["/bin/sh", "/init-rustfs.sh"]
     networks:
       - app-bridge
 
@@ -192,4 +192,4 @@ networks:
 
 volumes:
   template-web-node-modules:
-  template_minio_data:
+  template_rustfs_data:

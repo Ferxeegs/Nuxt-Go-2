@@ -11,9 +11,15 @@
 .card-hover {
     transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
     &:hover {
-        scale: 1.01;
-        transition: all 0.1s ease-in 0s;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(15, 23, 42, .08);
+        transition: all .15s ease;
     }
+}
+
+.v-card:not(.v-card--variant-outlined):not(.v-menu > .v-overlay__content > .v-card) {
+    border: 1px solid rgb(var(--v-theme-borderColor));
+    box-shadow: $box-shadow;
 }
 
 .v-card {
@@ -46,3 +52,5 @@
         padding: 0.625rem 1rem;
     }
 }
+.v-card.elevation-1,
+.v-card.elevation-2 { box-shadow: $box-shadow !important; }

@@ -59,7 +59,13 @@ export function useRolesAdmin() {
     await fetchRoles()
   }
 
+  async function getRole(id: number) {
+    const res = await api<AdminRole>(`/admin/roles/${id}`)
+    return res.data as AdminRole
+  }
+
   return {
+    getRole,
     items,
     permissions,
     loading,

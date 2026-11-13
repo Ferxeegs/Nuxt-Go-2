@@ -10,13 +10,13 @@ $white: #fff !default;
 // cards
 $card-title-size: 18px !default;
 
-$body-font-family: 'Plus Jakarta Sans' !default;
-$border-radius-root: 7px;
-$btn-font-weight: 400 !default;
+$body-font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif !default;
+$border-radius-root: 10px;
+$btn-font-weight: 500 !default;
 $btn-letter-spacing: 0 !default;
 
 // Global Shadow
-$box-shadow: 0 2px 6px rgba(37,83,185,.1) ;
+$box-shadow: 0 1px 2px rgba(15, 23, 42, .04), 0 1px 3px rgba(15, 23, 42, .06);
 
 // Global Radius as per breakeven point
 
@@ -133,18 +133,18 @@ $box-shadow: 0 2px 6px rgba(37,83,185,.1) ;
             null: $border-radius-root,
             'md': $border-radius-root * 1,
             'lg': $border-radius-root + 3,
-            'xl': $border-radius-root + 11,
+            'xl': $border-radius-root + 6,
             'pill': 9999px,
             'circle': 50%
         ),
 
     // 👉 Card
     // $card-color: rgba(var(--v-theme-on-surface), var(--v-medium-emphasis-opacity)) !default,
-    $card-elevation: 10 !default,
+    $card-elevation: 0 !default,
     $card-title-line-height: 1.6 !default,
-    $card-text-padding: 30px !default,
-    $card-item-padding: 20px 30px 30px !default,
-    $card-actions-padding: 10px 24px 24px !default,
+    $card-text-padding: 24px !default,
+    $card-item-padding: 20px 24px !default,
+    $card-actions-padding: 8px 24px 20px !default,
     $card-subtitle-opacity: 1 !default,
     // $card-border-color	$border-color-root
 );

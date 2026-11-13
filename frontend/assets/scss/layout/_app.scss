@@ -1,0 +1,276 @@
+// ============================================================================
+// App shell: sidebar, header, content area, brand
+// ============================================================================
+$sidebar-w: 268px;
+$content-max: 1440px;
+
+html {
+    overflow-y: auto;
+    -webkit-font-smoothing: antialiased;
+}
+
+.v-application,
+.v-application__wrap {
+    background: rgb(var(--v-theme-background));
+}
+
+.cursor-pointer { cursor: pointer; }
+
+// ---------------------------------------------------------------- brand ----
+.app-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: rgb(var(--v-theme-textPrimary));
+    min-width: 0;
+
+    &__mark {
+        flex: none;
+        width: 38px;
+        height: 38px;
+        border-radius: 11px;
+        display: grid;
+        place-items: center;
+        color: #fff;
+        background: linear-gradient(135deg, rgb(var(--v-theme-primary)), rgb(var(--v-theme-indigo)));
+        box-shadow: 0 6px 14px rgba(var(--v-theme-primary), .35);
+    }
+
+    &__text { display: flex; flex-direction: column; line-height: 1.15; min-width: 0; }
+    &__name { font-weight: 700; font-size: 15px; letter-spacing: -.01em; white-space: nowrap; }
+    &__tag { font-size: 11px; color: rgb(var(--v-theme-grey100)); white-space: nowrap; }
+
+    &--light {
+        color: #fff;
+        .app-brand__tag { color: rgba(255, 255, 255, .7); }
+        .app-brand__mark { background: rgba(255, 255, 255, .18); box-shadow: none; backdrop-filter: blur(4px); }
+    }
+}
+
+// -------------------------------------------------------------- sidebar ----
+.app-sidebar.v-navigation-drawer {
+    background: rgb(var(--v-theme-containerBg));
+    border-right: 1px solid rgb(var(--v-theme-borderColor)) !important;
+    box-shadow: none !important;
+
+    .v-navigation-drawer__content { overflow: hidden !important; display: flex; flex-direction: column; }
+
+    .app-sidebar__brand {
+        flex: none;
+        height: 64px;
+        padding: 0 20px;
+        display: flex;
+        align-items: center;
+        border-bottom: 1px solid rgb(var(--v-theme-borderColor));
+    }
+
+    .app-sidebar__scroll { flex: 1; min-height: 0; }
+    .app-sidebar__list { padding: 16px 12px 24px; background: transparent; }
+}
+
+.app-sidebar.v-navigation-drawer { transition: width .2s ease, box-shadow .2s ease, transform .2s ease; }
+// Hover-expanded rail floats above the page instead of pushing it.
+.app-sidebar.v-navigation-drawer--rail.v-navigation-drawer--is-hovering { box-shadow: 0 12px 40px rgba(15, 23, 42, .18) !important; z-index: 1010 !important; }
+
+// Collapsed rail: icon buttons and the mark sit on the drawer center line.
+.app-sidebar.v-navigation-drawer--rail:not(.v-navigation-drawer--is-hovering) {
+    .app-sidebar__brand { padding: 0; justify-content: center; }
+
+    .ps__rail-x,
+    .ps__rail-y { opacity: 0 !important; pointer-events: none !important; }
+
+    .app-sidebar__list {
+        padding: 10px 0 20px !important;
+
+        .nav-section {
+            margin: 8px 0;
+            padding: 0 !important;
+            justify-content: center;
+
+            &:first-child { display: none; }
+            &__text { display: none; }
+            &__line { flex: none; width: 22px; }
+        }
+
+        .nav-item.v-list-item {
+            width: 44px;
+            height: 44px;
+            min-height: 44px !important;
+            margin: 2px auto !important;
+            padding: 0 !important;
+            border-radius: 12px;
+            display: grid !important;
+            grid-template-areas: "prepend" !important;
+            grid-template-columns: 1fr !important;
+            justify-items: center;
+            align-items: center;
+            overflow: hidden;
+
+            .v-list-item__prepend {
+                width: auto !important;
+                min-width: 0 !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                justify-content: center;
+            }
+
+            .v-list-item__spacer { display: none !important; width: 0 !important; }
+            .v-list-item__content,
+            .v-list-item__append { display: none !important; }
+            .nav-item__icon,
+            .v-list-item__prepend > .v-icon { margin: 0 !important; }
+
+            // An open group is hidden in the rail, so don't keep its header looking selected.
+            &.v-list-group__header.v-list-item--active:not(.nav-item--parent-active) {
+                background: transparent;
+                color: rgb(var(--v-theme-textSecondary));
+                .nav-item__icon { opacity: .75; }
+            }
+
+            &.nav-item--parent-active {
+                background: rgba(var(--v-theme-primary), .1);
+                color: rgb(var(--v-theme-primary));
+                .nav-item__icon { opacity: 1; }
+            }
+        }
+
+        .v-list-group__items { display: none !important; }
+    }
+}
+
+.nav-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 20px 12px 8px;
+
+    &:first-child { padding-top: 4px; }
+
+    &__text {
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+        color: rgb(var(--v-theme-grey100));
+        opacity: .85;
+        white-space: nowrap;
+    }
+
+    &__line { flex: 1; height: 1px; background: rgb(var(--v-theme-borderColor)); }
+}
+
+.app-sidebar__list {
+    .nav-item.v-list-item {
+        min-height: 42px;
+        margin-bottom: 2px;
+        border-radius: 10px;
+        padding-inline: 12px !important;
+        color: rgb(var(--v-theme-textSecondary));
+        transition: background-color .15s ease, color .15s ease;
+
+        .v-list-item__prepend { width: 28px; margin-inline-end: 10px; }
+        .v-list-item__overlay { display: none; }
+        .nav-item__icon { opacity: .75; transition: opacity .15s ease; }
+        .v-list-item-title { font-size: 14px; font-weight: 500; }
+
+        &:hover {
+            background: rgb(var(--v-theme-hoverColor));
+            color: rgb(var(--v-theme-textPrimary));
+            .nav-item__icon { opacity: 1; }
+        }
+
+        &.v-list-item--active {
+            background: rgba(var(--v-theme-primary), .1);
+            color: rgb(var(--v-theme-primary));
+            .nav-item__icon { opacity: 1; }
+            .v-list-item-title { font-weight: 600; }
+        }
+
+        &.nav-item--parent-active { color: rgb(var(--v-theme-textPrimary)); .nav-item__icon { opacity: 1; } }
+    }
+
+    // Sub-items of a collapsible group
+    .v-list-group__items .nav-item--child.v-list-item {
+        min-height: 38px;
+        padding-inline-start: 18px !important;
+
+        .v-list-item__prepend { width: 24px; margin-inline-end: 8px; }
+        .nav-item__dot {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: currentColor; opacity: .35;
+            margin-inline-start: 11px;
+        }
+        &.v-list-item--active .nav-item__dot { opacity: 1; }
+        .v-list-item-title { font-size: 13.5px; }
+    }
+
+    .v-list-group__items { position: relative; }
+}
+
+// --------------------------------------------------------------- header ----
+.app-header.v-app-bar {
+    background: rgba(var(--v-theme-containerBg), .85) !important;
+    backdrop-filter: saturate(180%) blur(10px);
+    border-bottom: 1px solid rgb(var(--v-theme-borderColor));
+    color: rgb(var(--v-theme-textPrimary));
+
+    .v-toolbar__content { padding: 0; }
+
+    .app-header__inner {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        padding: 0 16px;
+        gap: 4px;
+
+        @media (min-width: 960px) { padding: 0 28px; }
+    }
+
+    .app-header__crumbs {
+        .v-breadcrumbs-item { font-size: 13px; color: rgb(var(--v-theme-grey100)); padding: 0; }
+        .v-breadcrumbs-item--disabled { color: rgb(var(--v-theme-textPrimary)); font-weight: 600; opacity: 1; }
+        .v-breadcrumbs-divider { padding: 0 6px; color: rgb(var(--v-theme-grey100)); }
+    }
+}
+
+.user-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 8px 4px 4px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    background: transparent;
+    cursor: pointer;
+    transition: background-color .15s ease, border-color .15s ease;
+
+    &:hover { background: rgb(var(--v-theme-hoverColor)); border-color: rgb(var(--v-theme-borderColor)); }
+
+    &__meta { flex-direction: column; align-items: flex-start; line-height: 1.2; max-width: 180px; }
+    &__name { font-size: 13px; font-weight: 600; color: rgb(var(--v-theme-textPrimary)); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    &__role { font-size: 11px; color: rgb(var(--v-theme-grey100)); }
+}
+
+.user-menu { border-radius: 14px !important; &__head { padding: 16px; } }
+
+// -------------------------------------------------------------- content ----
+.app-main { min-height: 100vh; }
+
+.app-content {
+    max-width: $content-max;
+    margin: 0 auto;
+    padding: 20px 16px 48px;
+
+    @media (min-width: 960px) { padding: 28px 28px 56px; }
+
+    // Pages wrap themselves in <v-container>; avoid double gutters.
+    > .v-container,
+    > .v-container--fluid { padding: 0; }
+}
+
+// Page heading used across admin pages (h1 + description row)
+.app-content h1.text-h5 { font-size: 1.5rem !important; letter-spacing: -.015em; }
+
+// Wrapped/overflowing tables never break the layout
+.v-table { background: transparent; }

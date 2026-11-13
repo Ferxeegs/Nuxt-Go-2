@@ -47,7 +47,7 @@ type Config struct {
 	MaxUploadSizeMB int64
 	UploadDir       string
 
-	// Optional MinIO / S3 settings (local disk uploader still used until wired).
+	// Optional RustFS / S3 settings (local disk uploader still used until wired).
 	S3EndpointURL       string
 	S3PublicEndpointURL string
 	S3AccessKey         string

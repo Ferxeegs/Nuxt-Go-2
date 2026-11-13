@@ -1,42 +1,42 @@
 import type { ThemeTypes } from '@/types/themeTypes/ThemeType';
 
+// Modern slate + indigo palette. Key names are kept so existing pages
+// (bg-lightprimary, text-textPrimary, ...) continue to work.
 const BLUE_THEME: ThemeTypes = {
     name: 'BLUE_THEME',
     dark: false,
     variables: {
-        'border-color': '#e5eaef'
+        'border-color': '#e6e8f0'
     },
     colors: {
-        primary: '#0085db',
-        secondary: '#707a82',
-        info: '#46caeb',
-        success: '#4bd08b',
-        warning: '#f8c076',
-        error: '#fb977d',
-        indigo:'#8763da',
-        lightprimary: '#e5f3fb',
-        lightinfo:'#e1f5fa',
-        lightsecondary: '#e7ecf0',
-        lightsuccess: '#dffff3',
-        lighterror: '#ffede9',
-        lightwarning: '#fff6ea',
-        lightindigo:'#f1ebff',
-        textPrimary: '#2A3547',
-        textSecondary: '#2A3547',
-        borderColor: '#e5eaef',
-        inputBorder: '#DFE5EF',
+        primary: '#4f46e5',
+        secondary: '#64748b',
+        info: '#0ea5e9',
+        success: '#10b981',
+        warning: '#f59e0b',
+        error: '#ef4444',
+        indigo: '#7c3aed',
+        lightprimary: '#eef2ff',
+        lightinfo: '#e0f2fe',
+        lightsecondary: '#f1f5f9',
+        lightsuccess: '#d1fae5',
+        lighterror: '#fee2e2',
+        lightwarning: '#fef3c7',
+        lightindigo: '#ede9fe',
+        textPrimary: '#0f172a',
+        textSecondary: '#475569',
+        borderColor: '#e6e8f0',
+        inputBorder: '#d9dce6',
         containerBg: '#ffffff',
-        background: '#f0f5f9',
-        hoverColor: '#f6f9fc',
-        surface: '#fff',
-        grey100: '#707a82',
-        grey200: '#111c2d',
-        darkbg:'#2a3447',
-        bglight:'#f5f8fb',
-        bgdark:'#111c2d'
-       
+        background: '#f6f7fb',
+        hoverColor: '#f8fafc',
+        surface: '#ffffff',
+        grey100: '#64748b',
+        grey200: '#0f172a',
+        darkbg: '#1e293b',
+        bglight: '#f8fafc',
+        bgdark: '#0f172a'
     }
 };
 
-
-export { BLUE_THEME};
+export { BLUE_THEME };
